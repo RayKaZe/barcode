@@ -8,6 +8,8 @@ TextLayer *label;
 
 int currentBarcode = 0;
 int nBarcodes = 2;
+
+/*
 typedef struct Barcode {
 	char* label;
 	char* code;
@@ -19,19 +21,14 @@ Barcode barcodes[] = {
 	{"The Castle", "0000", CODE39},
 	{"Test", "TEST12", CODE128},
 };
+*/
 
 void display() {
-	switch (barcodes[currentBarcode].sym) {
-	case CODE39:
-		bmp->bounds.size.h = drawCode39(barcodes[currentBarcode].code);
-		break;
-	case CODE128:
-		bmp->bounds.size.h = drawCode128(barcodes[currentBarcode].code);
-		break;
-	}
-	bitmap_layer_set_bitmap(barcode, bmp);
+	bmp->bounds.size.h = drawCode128("9794024334524784");
 	
-	text_layer_set_text(label, barcodes[currentBarcode].label);
+  bitmap_layer_set_bitmap(barcode, bmp);
+	
+	//text_layer_set_text(label, barcodes[currentBarcode].label);
 }
 
 int margin = 4;
@@ -52,11 +49,12 @@ void window_load(Window *window) {
 	bmp->row_size_bytes = (bounds.size.w/8+3) & ~3;
 	bmp->addr = malloc(bounds.size.h * bmp->row_size_bytes);
 	
+  /*
 	label = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 16 } });
 	text_layer_set_text(label, "Barcodes!");
 	text_layer_set_text_alignment(label, GTextAlignmentCenter);
 	layer_add_child(windowLayer, text_layer_get_layer(label));
-	
+	*/
 	display();
 }
 

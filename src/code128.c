@@ -98,9 +98,18 @@ char* charLookup[] = {
 	"10101111000",
 	"10100011110",
 	"10001011110",
+  "10111101000",
+  "10111100010",
+  "11110101000",
+  "11110100010",
+  "10111011110",
 };
 
-static char* startA = "11010000100";
+//static char* startA = "11010000100";
+//static char* startC = "11010010000";
+static char* startC = "11010011100";
+static char* fnc = "11110101110";
+
 static char* stop = "1100011101011";
 
 static char* drawBar(char *buf, char val) {
@@ -128,18 +137,33 @@ static char* drawChar(char *buf, char *c) {
 static int charWidth = 11;
 
 int drawCode128(char *c) {
-	int count = 0, sum = 103;
+	int count = 2, sum = 207;
 	char *buf = (char*)bmp->addr;
 	memset(bmp->addr, 0xFF, bmp->bounds.size.h * bmp->row_size_bytes);
 	
-	buf = drawChar(buf, startA);
+	//Start sign
+	buf = drawChar(buf, startC);
+	buf = drawChar(buf, fnc);
+	
 	while (*c != '\0') {
-		buf = drawChar(buf, charLookup[*c-32]);
-		count++;
-		sum += count * (*c-32);
+		int in1 = *c-48;
+		c++;
+		int in2 = *c-48;
+		int number = in1 * 10 + in2;
+
+
+		buf = drawChar(buf, charLookup[number]);
+		app_log(APP_LOG_LEVEL_INFO, "code128.c", 151, "Number: %d", number);
+		
+		sum += count * (number);
+    count++;
 		c++;
 	}
-	sum %= 103;
+	app_log(APP_LOG_LEVEL_INFO, "code128.c", 157, "Sum0: %d", sum);
+  
+  sum %= 103;
+  
+  app_log(APP_LOG_LEVEL_INFO, "code128.c", 161, "Sum: %d", sum);
 	buf = drawChar(buf, charLookup[sum]);
 	buf = drawChar(buf, stop);
 	
